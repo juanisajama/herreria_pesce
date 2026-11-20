@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="es"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex"><title>Admin · Herrería Pesce</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600&family=Barlow+Condensed:wght@700;800&display=swap">
+<link rel="stylesheet" href="/style.css">
+<style>main{max-width:640px;margin:0 auto;padding:30px 20px;display:flex;flex-direction:column;gap:18px}
+h1{font-size:2.6rem;text-transform:uppercase;border-bottom:5px solid var(--fire);padding-bottom:8px}
+.box{background:var(--steel);padding:16px;display:flex;flex-direction:column;gap:10px}
+.row{display:flex;gap:10px;flex-wrap:wrap}.row>*{flex:1;min-width:130px}
+li{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid var(--steel2)}ul{list-style:none;margin:0;padding:0}
+#err{color:#ff8a65;min-height:1.4em;margin:0}</style></head><body>
+<main><h1>Admin</h1><p id="err"></p>
+<form class="box" id="lf"><label>Contraseña<input type="password" id="pw" required autocomplete="current-password"></label><button class="btn">Entrar</button></form>
+<div id="app" hidden style="display:none;flex-direction:column;gap:18px">
+ <form class="box" id="bf"><h2>Bloquear fechas</h2>
+  <label>Producto<select id="prod"></select></label>
+  <div class="row"><label>Desde<input type="date" id="s" required></label><label>Hasta<input type="date" id="e" required></label></div>
+  <label>Nota (opcional)<input id="n" placeholder="Sin stock, taller lleno…"></label>
+  <button class="btn">Bloquear</button></form>
+ <div class="box"><h2>Fechas bloqueadas</h2><ul id="bl"></ul></div>
+ <div class="box"><h2>Últimas reservas iniciadas</h2><ul id="rs"></ul></div>
+</div></main>
+<script>
+const $=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let tk=sessionStorage.getItem('tk');
+const api=(u,o={})=>fetch(u,{...o,headers:{'content-type':'application/json',authorization:'Bearer '+tk}}).then(async r=>{const j=await r.json();if(r.status===401&&tk){sessionStorage.removeItem('tk');location.reload()}if(!r.ok)throw new Error(j.error);return j});
+const fail=e=>$('#err').textContent=e.message;
+$('#lf').onsubmit=async e=>{e.preventDefault();$('#err').textContent='';try{tk=(await api('/api/admin/login',{method:'POST',body:JSON.stringify({password:$('#pw').value})})).token;sessionStorage.setItem('tk',tk);start()}catch(x){fail(x)}};
+async function start(){
+  $('#lf').hidden=true;$('#app').style.display='flex';
+  if(!$('#prod').options.length){const ps=await fetch('/api/products').then(r=>r.json());$('#prod').innerHTML='<option value="">Todos los productos (taller lleno)</option>'+ps.map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join('')}
+  try{const d=await api('/api/admin/data');
+   $('#bl').innerHTML=d.blocks.map(b=>`<li><span><b>${esc(b.product||'Todos')}</b><br>${b.start_date} → ${b.end_date} ${esc(b.note)}</span><button class="btn ghost" data-del="${b.id}">Quitar</button></li>`).join('')||'<li class="muted">No hay bloqueos.</li>';
+   $('#rs').innerHTML=d.reservations.map(r=>`<li><span>${esc(r.product)} · ${r.date} · ${r.delivery}</span><span>$${r.deposit.toLocaleString('es-AR')}</span></li>`).join('')||'<li class="muted">Todavía no hay reservas.</li>';
+  }catch(x){fail(x)}
+}
+$('#bf').onsubmit=async e=>{e.preventDefault();$('#err').textContent='';try{await api('/api/admin/blocks',{method:'POST',body:JSON.stringify({product_id:+$('#prod').value||null,start:$('#s').value,end:$('#e').value,note:$('#n').value})});$('#bf').reset();start()}catch(x){fail(x)}};
+$('#bl').onclick=async e=>{const b=e.target.closest('[data-del]');if(b){try{await api('/api/admin/blocks/'+b.dataset.del,{method:'DELETE'});start()}catch(x){fail(x)}}};
+if(tk)start();
+</script></body></html>

@@ -1,0 +1,2 @@
+ADMIN_PASSWORD=cambiame
+SESSION_SECRET=una-cadena-larga-y-aleatoria

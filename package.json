@@ -1,0 +1,11 @@
+{
+  "name": "herreriapesce",
+  "private": true,
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "db:local": "wrangler d1 execute herreriapesce --local --file=schema.sql",
+    "db:remote": "wrangler d1 execute herreriapesce --remote --file=schema.sql"
+  },
+  "devDependencies": { "wrangler": "^4" }
+}

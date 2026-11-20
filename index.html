@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="es"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Herrería Pesce · San Martín, Buenos Aires</title>
+<meta name="description" content="Herrería artesanal en San Martín: parrillas, soportes y barras hechos a mano. Reservá online.">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600&family=Barlow+Condensed:wght@700;800&display=swap">
+<link rel="stylesheet" href="/style.css">
+<style>
+header{border-bottom:6px solid var(--fire);padding:56px 0 36px;background:linear-gradient(180deg,var(--steel),var(--bg))}
+header h1{font-size:clamp(3.2rem,11vw,7rem);font-weight:800;text-transform:uppercase;letter-spacing:-.01em}
+header p{max-width:46ch;font-size:1.15rem;color:var(--mute);margin:14px 0 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:20px;padding:40px 0 70px}
+.card{background:var(--steel);display:flex;flex-direction:column;border-left:4px solid var(--fire)}
+.ph{aspect-ratio:4/3;background:var(--steel2);display:grid;place-items:center;overflow:hidden;color:var(--mute);font-family:'Barlow Condensed',sans-serif;font-size:1.6rem;padding:12px;text-align:center}
+.ph img{width:100%;height:100%;object-fit:cover}
+.card .b{padding:16px;display:flex;flex-direction:column;gap:8px;flex:1}
+.card h3{font-size:1.7rem}.price{font-size:1.5rem;font-weight:600}
+.card .btn{margin-top:auto}
+footer{border-top:1px solid var(--steel2);padding:28px 0;color:var(--mute)}
+dialog{background:var(--bg);color:var(--white);border:2px solid var(--steel2);padding:0;width:min(440px,94vw);max-height:92vh}
+dialog::backdrop{background:#000b}
+.dlg{padding:20px;display:flex;flex-direction:column;gap:14px}
+.cal-h{display:flex;align-items:center;justify-content:space-between;text-transform:capitalize;font-weight:600}
+.cal-h button{background:var(--steel);border:0;width:40px;height:40px;cursor:pointer}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center}
+.cal span.w{font-size:.8rem;color:var(--mute)}
+.cal button{aspect-ratio:1;border:0;background:var(--steel);cursor:pointer}
+.cal button:disabled{background:transparent;color:#555d63;text-decoration:line-through;cursor:not-allowed}
+.cal button.on{background:var(--fire);color:#111;font-weight:700}
+.opt{display:flex;gap:10px;align-items:flex-start;padding:12px;border:2px solid var(--steel2);cursor:pointer}
+.opt:has(input:checked){border-color:var(--fire)}.opt input{width:auto;margin-top:5px}
+.sum{display:grid;grid-template-columns:auto 1fr;gap:6px 14px}.sum dt{color:var(--mute)}.sum dd{margin:0}
+.row{display:flex;gap:10px}.row>*{flex:1}
+</style></head><body>
+<header><div class="wrap"><h1>Herrería Pesce</h1><p>Herrería artesanal en San Martín, Buenos Aires. Reservá tu pedido y elegí cuándo lo retirás o lo recibís.</p></div></header>
+<main class="wrap"><div class="grid" id="grid"><p class="muted">Cargando productos…</p></div></main>
+<footer><div class="wrap">Taller en San Martín, Buenos Aires · WhatsApp +54 9 11 6596-1753</div></footer>
+
+<dialog id="d1"><div class="dlg">
+  <h2 id="d1t"></h2>
+  <div class="cal-h"><button id="prev" aria-label="Mes anterior">‹</button><span id="mes"></span><button id="next" aria-label="Mes siguiente">›</button></div>
+  <div class="cal" id="cal"></div>
+  <p class="muted" id="hint" style="margin:0;font-size:.9rem">Las fechas tachadas no están disponibles.</p>
+  <label class="opt"><input type="radio" name="ship" value="retiro" checked><span><b>Retiro gratis en taller</b><br><span class="muted">San Martín</span></span></label>
+  <label class="opt"><input type="radio" name="ship" value="envio"><span><b>Envío a domicilio</b><br><span class="muted">Desde $15.000 ARS en AMBA</span></span></label>
+  <div class="row"><button class="btn ghost" id="x1">Cancelar</button><button class="btn" id="go" disabled>Ver resumen</button></div>
+</div></dialog>
+
+<dialog id="d2"><div class="dlg">
+  <h2>Resumen de tu reserva</h2>
+  <dl class="sum" id="sum"></dl>
+  <p class="muted" style="margin:0">Al enviar el mensaje, te pasamos el CBU/alias para transferir la seña y confirmamos tu fecha.</p>
+  <div class="row"><button class="btn ghost" id="x2">Volver</button><a class="btn" id="wa" target="_blank" rel="noopener">Enviar por WhatsApp</a></div>
+</div></dialog>
+
+<script>
+const $=s=>document.querySelector(s), esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const money=n=>'$'+n.toLocaleString('es-AR'), pad=n=>String(n).padStart(2,'0'), iso=(y,m,d)=>`${y}-${pad(m+1)}-${pad(d)}`;
+const WA='5491165961753';
+let cur,blocks=[],view,sel=null;
+const t=new Date(); t.setDate(t.getDate()+1); const minIso=iso(t.getFullYear(),t.getMonth(),t.getDate());
+const blocked=d=>blocks.some(b=>d>=b.start_date&&d<=b.end_date);
+const ship=()=>document.querySelector('[name=ship]:checked').value;
+const fmt=d=>{const[y,m,x]=d.split('-');return new Date(y,m-1,x).toLocaleDateString('es-AR',{weekday:'long',day:'numeric',month:'long'})};
+
+fetch('/api/products').then(r=>r.json()).then(ps=>{
+  $('#grid').innerHTML=ps.map(p=>`<article class="card"><div class="ph"><img src="/img/${esc(p.slug)}.jpg" alt="${esc(p.name)}" onerror="this.remove()">${esc(p.name)}</div>
+  <div class="b"><h3>${esc(p.name)}</h3><span class="muted">${esc(p.specs||'')}</span><span class="price">${money(p.price)}</span>
+  <span class="muted">Seña: ${p.deposit_pct}% (${money(Math.round(p.price*p.deposit_pct/100))})</span>
+  <button class="btn" data-id="${p.id}">Reservar</button></div></article>`).join('');
+  $('#grid').onclick=e=>{const b=e.target.closest('[data-id]');if(b)openBooking(ps.find(p=>p.id==b.dataset.id))};
+}).catch(()=>$('#grid').textContent='No pudimos cargar los productos. Probá de nuevo en un momento.');
+
+async function openBooking(p){
+  cur=p; sel=null; $('#go').disabled=true; $('#d1t').textContent=p.name;
+  blocks=await fetch('/api/blocks?product_id='+p.id).then(r=>r.json()).catch(()=>[]);
+  const n=new Date(); view=new Date(n.getFullYear(),n.getMonth(),1); draw(); $('#d1').showModal();
+}
+function draw(){
+  const y=view.getFullYear(),m=view.getMonth(), off=(new Date(y,m,1).getDay()+6)%7, days=new Date(y,m+1,0).getDate();
+  $('#mes').textContent=view.toLocaleDateString('es-AR',{month:'long',year:'numeric'});
+  let h=['L','M','M','J','V','S','D'].map(d=>`<span class="w">${d}</span>`).join('')+'<i></i>'.repeat(off);
+  for(let d=1;d<=days;d++){const k=iso(y,m,d),off=k<minIso||blocked(k);
+    h+=`<button ${off?'disabled':''} class="${k===sel?'on':''}" data-d="${k}" aria-label="${fmt(k)}">${d}</button>`}
+  $('#cal').innerHTML=h;
+}
+$('#cal').onclick=e=>{const b=e.target.closest('[data-d]');if(b&&!b.disabled){sel=b.dataset.d;$('#go').disabled=false;draw()}};
+$('#prev').onclick=()=>{view.setMonth(view.getMonth()-1);draw()};
+$('#next').onclick=()=>{view.setMonth(view.getMonth()+1);draw()};
+$('#x1').onclick=()=>$('#d1').close(); $('#x2').onclick=()=>{$('#d2').close();$('#d1').showModal()};
+$('#go').onclick=()=>{
+  const dep=Math.round(cur.price*cur.deposit_pct/100), s=ship(), modo=s==='retiro'?'Retiro gratis en taller (San Martín)':'Envío a domicilio (desde $15.000 ARS en AMBA, a coordinar)';
+  $('#sum').innerHTML=`<dt>Producto</dt><dd>${esc(cur.name)}</dd><dt>Fecha</dt><dd>${fmt(sel)}</dd><dt>Modalidad</dt><dd>${modo}</dd><dt>Precio</dt><dd>${money(cur.price)}</dd><dt>Seña (${cur.deposit_pct}%)</dt><dd><b>${money(dep)}</b></dd>`;
+  const msg=`Hola Herrería Pesce! Quiero reservar:\n• Producto: ${cur.name}\n• Fecha: ${fmt(sel)}\n• Modalidad: ${modo}\n• Seña a transferir: ${money(dep)} (${cur.deposit_pct}% de ${money(cur.price)})`;
+  $('#wa').href=`https://wa.me/${WA}?text=${encodeURIComponent(msg)}`;
+  $('#wa').onclick=()=>{fetch('/api/reservations',{method:'POST',keepalive:true,headers:{'content-type':'application/json'},body:JSON.stringify({product_id:cur.id,date:sel,delivery:s})})};
+  $('#d1').close(); $('#d2').showModal();
+};
+</script></body></html>
