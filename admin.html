@@ -29,7 +29,7 @@ const fail=e=>$('#err').textContent=e.message;
 $('#lf').onsubmit=async e=>{e.preventDefault();$('#err').textContent='';try{tk=(await api('/api/admin/login',{method:'POST',body:JSON.stringify({password:$('#pw').value})})).token;sessionStorage.setItem('tk',tk);start()}catch(x){fail(x)}};
 async function start(){
   $('#lf').hidden=true;$('#app').style.display='flex';
-  if(!$('#prod').options.length){const ps=await fetch('/api/products').then(r=>r.json());$('#prod').innerHTML='<option value="">Todos los productos (taller lleno)</option>'+ps.map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join('')}
+  if(!$('#prod').options.length){const response=await fetch('/api/products');const ps=await response.json();if(!response.ok||!Array.isArray(ps))throw new Error('No se pudieron cargar los productos');$('#prod').innerHTML='<option value="">Todos los productos (taller lleno)</option>'+ps.map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join('')}
   try{const d=await api('/api/admin/data');
    $('#bl').innerHTML=d.blocks.map(b=>`<li><span><b>${esc(b.product||'Todos')}</b><br>${b.start_date} → ${b.end_date} ${esc(b.note)}</span><button class="btn ghost" data-del="${b.id}">Quitar</button></li>`).join('')||'<li class="muted">No hay bloqueos.</li>';
    $('#rs').innerHTML=d.reservations.map(r=>`<li><span>${esc(r.product)} · ${r.date} · ${r.delivery}</span><span>$${r.deposit.toLocaleString('es-AR')}</span></li>`).join('')||'<li class="muted">Todavía no hay reservas.</li>';

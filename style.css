@@ -1,12 +1,14 @@
-:root{--bg:#121416;--steel:#2a2f33;--steel2:#3b4248;--fire:#ff5a1f;--white:#f6f4f1;--mute:#9aa3aa;color-scheme:dark}
+:root{--bg:#111315;--steel:#24292d;--steel2:#394047;--fire:#ff5a1f;--white:#f7f4ef;--mute:#abb2b7;--green:#25d366;color-scheme:dark}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--white);font:16px/1.5 'Barlow',system-ui,sans-serif}
 h1,h2,h3{font-family:'Barlow Condensed','Arial Narrow',sans-serif;line-height:1;margin:0}
-.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+.wrap{max-width:1120px;margin:0 auto;padding:0 24px}
 button,input,select{font:inherit;color:inherit}
-.btn{background:var(--fire);color:#111;border:0;padding:12px 20px;font-weight:700;cursor:pointer;text-decoration:none;display:inline-block;text-align:center}
+.btn{background:var(--fire);color:#111;border:0;padding:13px 20px;font-weight:700;cursor:pointer;text-decoration:none;display:inline-block;text-align:center;border-radius:2px}
 .btn:hover{background:#ff7a47}.btn:disabled{background:var(--steel2);color:var(--mute);cursor:not-allowed}
 .btn.ghost{background:none;border:2px solid var(--steel2);color:var(--white)}
+.btn.whatsapp{background:var(--green);color:#101510}
 :focus-visible{outline:3px solid var(--fire);outline-offset:2px}
 input,select{background:var(--steel);border:1px solid var(--steel2);padding:10px;width:100%}
 .muted{color:var(--mute)}
+html{scroll-behavior:smooth}

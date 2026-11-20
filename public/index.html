@@ -31,10 +31,44 @@ dialog::backdrop{background:#000b}
 .opt:has(input:checked){border-color:var(--fire)}.opt input{width:auto;margin-top:5px}
 .sum{display:grid;grid-template-columns:auto 1fr;gap:6px 14px}.sum dt{color:var(--mute)}.sum dd{margin:0}
 .row{display:flex;gap:10px}.row>*{flex:1}
+.nav{height:76px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #ffffff14}
+.brand{font-family:'Barlow Condensed',sans-serif;font-size:1.35rem;font-weight:800;text-transform:uppercase;letter-spacing:.04em}
+.brand span{color:var(--fire)}
+.navlinks{display:flex;gap:28px}.navlinks a{color:var(--white);text-decoration:none;font-weight:600}.navlinks a:hover{color:var(--fire)}
+.hero{min-height:560px;display:grid;grid-template-columns:1.12fr .88fr;align-items:center;gap:36px;padding:56px 0 70px}
+.hero h1{font-size:clamp(4rem,9vw,7.4rem);text-transform:uppercase;letter-spacing:-.02em}
+.hero h1 span{display:block;color:var(--fire)}
+.hero-copy{max-width:520px;font-size:1.12rem;color:var(--mute);margin:22px 0 28px}
+.hero-actions{display:flex;gap:12px;flex-wrap:wrap}
+.hero-art{min-height:410px;position:relative;display:grid;place-items:center;border:1px solid var(--steel2);background:linear-gradient(135deg,var(--steel),var(--bg));overflow:hidden}
+.hero-art:before{content:'';position:absolute;width:330px;height:330px;border:26px solid var(--steel2);border-radius:50%;box-shadow:0 0 0 18px #111315,0 0 0 20px var(--fire)}
+.hero-art:after{content:'HECHO\\A EN EL TALLER';white-space:pre;position:relative;font-family:'Barlow Condensed',sans-serif;font-size:clamp(2.2rem,5vw,4rem);font-weight:800;text-align:center;line-height:.85;text-shadow:0 3px 20px #000}
+.eyebrow{color:var(--fire);font-weight:800;text-transform:uppercase;letter-spacing:.16em;font-size:.82rem}
+.about{padding:82px 0}.about-head{display:flex;justify-content:space-between;align-items:end;gap:20px;margin-bottom:28px}.about-head h2,.catalog-head h2{font-size:clamp(2.6rem,6vw,4.8rem);text-transform:uppercase}
+.panels{display:grid;grid-template-columns:1.2fr .8fr .8fr;gap:16px}
+.panel{min-height:270px;padding:28px;display:flex;flex-direction:column;justify-content:flex-end;background:var(--steel);border-top:4px solid var(--fire)}
+.panel.dark{background:linear-gradient(145deg,#343b40,#1a1d20)}
+.panel.accent{background:var(--fire);color:#111;border-top-color:#111}
+.panel h3{font-size:2rem;text-transform:uppercase;margin-bottom:12px}.panel p{margin:0}.panel.accent p{color:#252525}
+.process{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:16px}
+.process div{border:1px solid var(--steel2);padding:20px}.process b{color:var(--fire);font-family:'Barlow Condensed',sans-serif;font-size:2.2rem;margin-right:8px}
+.catalog{padding:82px 0;background:#181b1d}.catalog-head{display:flex;justify-content:space-between;align-items:end;margin-bottom:28px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:20px;padding:0}
+.card{background:var(--steel);display:flex;flex-direction:column;border-left:4px solid var(--fire)}
+.ph{aspect-ratio:4/3;background:linear-gradient(145deg,var(--steel2),var(--steel));display:grid;place-items:center;overflow:hidden;color:var(--mute);font-family:'Barlow Condensed',sans-serif;font-size:1.6rem;padding:12px;text-align:center;position:relative}
+.ph:before{content:'';width:54%;height:54%;border:8px solid #667079;transform:rotate(45deg);position:absolute;opacity:.38}
+.ph img{width:100%;height:100%;object-fit:cover;z-index:1}.ph img+span{position:relative}
+.card .b{padding:18px;display:flex;flex-direction:column;gap:8px;flex:1}.card h3{font-size:1.7rem}.price{font-size:1.5rem;font-weight:600}.card-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:auto}.card-actions .btn{padding:11px 8px}
+footer{border-top:1px solid var(--steel2);padding:28px 0;color:var(--mute)}
+@media(max-width:760px){.navlinks{gap:14px}.navlinks a:first-child{display:none}.hero{grid-template-columns:1fr;padding-top:36px}.hero-art{min-height:300px}.panels{grid-template-columns:1fr}.process{grid-template-columns:1fr}.catalog-head,.about-head{align-items:start;flex-direction:column}.hero h1{font-size:3.8rem}.wrap{padding:0 18px}}
 </style></head><body>
-<header><div class="wrap"><h1>Herrería Pesce</h1><p>Herrería artesanal en San Martín, Buenos Aires. Reservá tu pedido y elegí cuándo lo retirás o lo recibís.</p></div></header>
-<main class="wrap"><div class="grid" id="grid"><p class="muted">Cargando productos…</p></div></main>
-<footer><div class="wrap">Taller en San Martín, Buenos Aires · WhatsApp +54 9 11 6596-1753</div></footer>
+<header id="home"><nav class="nav wrap" aria-label="Navegación principal"><a class="brand" href="#home" style="color:inherit;text-decoration:none">Herrería <span>Pesce</span></a><div class="navlinks"><a href="#nosotros">Nosotros</a><a href="#productos">Productos</a><a class="btn" href="https://wa.me/5491165961753" target="_blank" rel="noopener">WhatsApp</a></div></nav>
+<div class="wrap hero"><div><span class="eyebrow">San Martín · Buenos Aires</span><h1>Hierro con <span>carácter.</span></h1><p class="hero-copy">Diseño, fabricación y terminaciones artesanales para tu hogar, gimnasio y espacio de trabajo.</p><div class="hero-actions"><a class="btn" href="#productos">Ver productos</a><a class="btn ghost" href="#nosotros">Conocer el taller</a></div></div><div class="hero-art" role="img" aria-label="Herrería artesanal Pesce"></div></div></header>
+<main><section class="about" id="nosotros"><div class="wrap"><div class="about-head"><div><span class="eyebrow">El taller</span><h2>Trabajo argentino,<br>hecho a mano.</h2></div><p class="muted" style="max-width:420px">Fabricamos piezas resistentes con medidas a medida y terminaciones cuidadas. Cada trabajo se coordina directamente con vos.</p></div>
+<div class="panels"><article class="panel dark"><span class="eyebrow">01</span><h3>Medida y diseño</h3><p>Adaptamos dimensiones y detalles a tu espacio.</p></article><article class="panel"><span class="eyebrow">02</span><h3>Fabricación</h3><p>Soldadura, refuerzo y terminación para uso cotidiano.</p></article><article class="panel accent"><span class="eyebrow">03</span><h3>Entrega</h3><p>Retiro en San Martín o coordinación de envío por AMBA.</p></article></div>
+<div class="process"><div><b>1</b> Elegí el producto</div><div><b>2</b> Reservá fecha y modalidad</div><div><b>3</b> Coordinamos por WhatsApp</div></div></div></section>
+<section class="catalog" id="productos"><div class="wrap"><div class="catalog-head"><div><span class="eyebrow">Catálogo</span><h2>Productos</h2></div><p class="muted">Stock sujeto a disponibilidad.</p></div><div class="grid" id="grid"><p class="muted">Cargando productos…</p></div></div></section></main>
+<footer><div class="wrap">Taller en San Martín, Buenos Aires · <a href="https://wa.me/5491165961753" target="_blank" rel="noopener" style="color:var(--white)">WhatsApp +54 9 11 6596-1753</a></div></footer>
 
 <dialog id="d1"><div class="dlg">
   <h2 id="d1t"></h2>
@@ -63,17 +97,25 @@ const blocked=d=>blocks.some(b=>d>=b.start_date&&d<=b.end_date);
 const ship=()=>document.querySelector('[name=ship]:checked').value;
 const fmt=d=>{const[y,m,x]=d.split('-');return new Date(y,m-1,x).toLocaleDateString('es-AR',{weekday:'long',day:'numeric',month:'long'})};
 
-fetch('/api/products').then(r=>r.json()).then(ps=>{
-  $('#grid').innerHTML=ps.map(p=>`<article class="card"><div class="ph"><img src="/img/${esc(p.slug)}.jpg" alt="${esc(p.name)}" onerror="this.remove()">${esc(p.name)}</div>
+fetch('/api/products').then(async r=>{
+  const ps=await r.json();
+  if(!r.ok||!Array.isArray(ps)) throw new Error('No se pudieron cargar los productos');
+  return ps;
+}).then(ps=>{
+  $('#grid').innerHTML=ps.map(p=>`<article class="card"><div class="ph"><img src="/img/${esc(p.slug)}.jpg" alt="${esc(p.name)}" onerror="this.remove()"><span>${esc(p.name)}</span></div>
   <div class="b"><h3>${esc(p.name)}</h3><span class="muted">${esc(p.specs||'')}</span><span class="price">${money(p.price)}</span>
   <span class="muted">Seña: ${p.deposit_pct}% (${money(Math.round(p.price*p.deposit_pct/100))})</span>
-  <button class="btn" data-id="${p.id}">Reservar</button></div></article>`).join('');
+  <div class="card-actions"><button class="btn" data-id="${p.id}">Reservar</button><a class="btn whatsapp" target="_blank" rel="noopener" href="https://wa.me/${WA}?text=${encodeURIComponent('Hola Herrería Pesce! Quiero comprar o consultar por: '+p.name+' ('+money(p.price)+')')}">WhatsApp</a></div></div></article>`).join('');
   $('#grid').onclick=e=>{const b=e.target.closest('[data-id]');if(b)openBooking(ps.find(p=>p.id==b.dataset.id))};
 }).catch(()=>$('#grid').textContent='No pudimos cargar los productos. Probá de nuevo en un momento.');
 
 async function openBooking(p){
   cur=p; sel=null; $('#go').disabled=true; $('#d1t').textContent=p.name;
-  blocks=await fetch('/api/blocks?product_id='+p.id).then(r=>r.json()).catch(()=>[]);
+  blocks=await fetch('/api/blocks?product_id='+p.id).then(async r=>{
+    const data=await r.json();
+    if(!r.ok||!Array.isArray(data)) throw new Error('No se pudieron cargar las fechas');
+    return data;
+  }).catch(()=>[]);
   const n=new Date(); view=new Date(n.getFullYear(),n.getMonth(),1); draw(); $('#d1').showModal();
 }
 function draw(){
